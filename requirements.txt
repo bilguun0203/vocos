@@ -6,3 +6,7 @@ einops
 pyyaml
 huggingface_hub
 encodec==0.1.1
+librosa
+onnx
+onnxruntime
+onnxscript
