@@ -32,6 +32,7 @@ class VocosExp(pl.LightningModule):
         evaluate_utmos: bool = False,
         evaluate_pesq: bool = False,
         evaluate_periodicty: bool = False,
+        n_mels: int = 100,
     ):
         """
         Args:
@@ -62,7 +63,7 @@ class VocosExp(pl.LightningModule):
         self.disc_loss = DiscriminatorLoss()
         self.gen_loss = GeneratorLoss()
         self.feat_matching_loss = FeatureMatchingLoss()
-        self.melspec_loss = MelSpecReconstructionLoss(sample_rate=sample_rate)
+        self.melspec_loss = MelSpecReconstructionLoss(sample_rate=sample_rate, n_mels=n_mels)
 
         self.train_discriminator = False
         self.base_mel_coeff = self.mel_loss_coeff = mel_loss_coeff
@@ -328,6 +329,7 @@ class VocosEncodecExp(VocosExp):
         evaluate_utmos: bool = False,
         evaluate_pesq: bool = False,
         evaluate_periodicty: bool = False,
+        n_mels: int = 100,
     ):
         super().__init__(
             feature_extractor,
@@ -343,6 +345,7 @@ class VocosEncodecExp(VocosExp):
             evaluate_utmos,
             evaluate_pesq,
             evaluate_periodicty,
+            n_mels,
         )
         # Override with conditional discriminators
         self.multiperioddisc = MultiPeriodDiscriminator(num_embeddings=len(self.feature_extractor.bandwidths))

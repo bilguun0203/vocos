@@ -62,6 +62,7 @@ def export_generator(config_path, checkpoint_path, output_dir, opset_version):
         num_warmup_steps=params["num_warmup_steps"],
         mel_loss_coeff=params["mel_loss_coeff"],
         mrd_loss_coeff=params["mrd_loss_coeff"],
+        n_mels=params["n_mels"],
     )
 
     if checkpoint_path.endswith(".bin"):
@@ -79,7 +80,7 @@ def export_generator(config_path, checkpoint_path, output_dir, opset_version):
     # epoch = state_dict["epoch"]
     # global_step = state_dict["global_step"]
     # onnx_filename = f"vocos-epoch={epoch}.step={global_step}.onnx"
-    onnx_filename = f"mel_spec_24khz.onnx"
+    onnx_filename = f"mel_spec_{params['sample_rate']}.onnx"
     onnx_path = os.path.join(output_dir, onnx_filename)
 
     dummy_input = torch.rand(1, vocos.backbone.input_channels, 64)
