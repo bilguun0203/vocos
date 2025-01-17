@@ -65,13 +65,30 @@ def export_generator(config_path, checkpoint_path, output_dir, opset_version):
         n_mels=params["n_mels"],
     )
 
+    state_dict = None
     if checkpoint_path.endswith(".bin"):
         state_dict = torch.load(checkpoint_path, map_location="cpu")
-        vocos.load_state_dict(state_dict, strict=False)
-
     elif checkpoint_path.endswith(".ckpt"):
         raw_model = torch.load(checkpoint_path, map_location="cpu")
-        vocos.load_state_dict(raw_model["state_dict"], strict=False)
+        state_dict = raw_model["state_dict"]
+    
+    if state_dict is None:
+        print("Failed to load checkpoint")
+        return
+
+    layers_to_remove = []
+    for key in params:
+        if "discriminators" in key:
+            layers_to_remove.append(key)
+        if "melspec_loss" in key:
+            layers_to_remove.append(key)
+        if "feature_extractor" in key: 
+            layers_to_remove.append(key)
+    print(f"Layers to remove: {layers_to_remove}")
+    for key in layers_to_remove:
+        del params[key]
+
+    vocos.load_state_dict(state_dict, strict=False)
 
     model = VocosGen(vocos)
     model.eval()
